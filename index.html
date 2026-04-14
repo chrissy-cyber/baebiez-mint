@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BaeBieZ — Mint Now | by Bae Apes</title>
+<meta name="description" content="Mint your BaeBieZ NFT. 4,444 unique collectibles on ApeChain by Bae Apes." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --pink: #ff6eb4;
+    --purple: #b06ef3;
+    --orange: #ff9f5a;
+    --yellow: #ffe066;
+    --dark: #0d0a14;
+    --card-bg: rgba(255,255,255,0.06);
+    --card-border: rgba(255,255,255,0.12);
+    --text: #fff;
+    --muted: rgba(255,255,255,0.55);
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND ── */
+  .bg-mesh {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(176,110,243,0.35) 0%, transparent 65%),
+      radial-gradient(ellipse 70% 50% at 90% 80%, rgba(255,110,180,0.30) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 60% 10%, rgba(255,159,90,0.18) 0%, transparent 55%),
+      #0d0a14;
+    pointer-events: none;
+  }
+
+  .noise {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* ── WRAPPER ── */
+  .wrap { position: relative; z-index: 1; }
+
+  /* ── NAV ── */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 48px;
+    border-bottom: 1px solid var(--card-border);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,10,20,0.6);
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--pink), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: #fff; }
+
+  .nav-connect {
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    border: none;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 22px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    white-space: nowrap;
+  }
+
+  .nav-connect:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    padding: 80px 48px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--pink);
+    border: 1px solid rgba(255,110,180,0.4);
+    padding: 6px 16px;
+    border-radius: 50px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(52px, 6vw, 88px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero-title span {
+    background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 50%, var(--orange) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-style: italic;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 420px;
+    margin-bottom: 40px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 32px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-val {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── MINT CARD ── */
+  .mint-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 40px;
+    backdrop-filter: blur(20px);
+    animation: fadeUp 0.6s 0.2s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mint-card::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--pink), var(--purple), var(--orange));
+    border-radius: 24px 24px 0 0;
+  }
+
+  .mint-card-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .mint-card-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  /* Progress bar */
+  .progress-section { margin-bottom: 32px; }
+
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .progress-labels strong {
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 50px;
+    background: linear-gradient(90deg, var(--pink), var(--purple));
+    transition: width 1s ease;
+  }
+
+  /* Quantity selector */
+  .qty-label {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+
+  .qty-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .qty-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 300;
+    width: 56px;
+    height: 56px;
+    cursor: pointer;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+
+  .qty-btn:hover { background: rgba(255,255,255,0.08); }
+  .qty-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .qty-num {
+    flex: 1;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    user-select: none;
+  }
+
+  /* Price display */
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .price-label { font-size: 14px; color: var(--muted); }
+
+  .price-val {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--pink), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Mint button */
+  .mint-btn {
+    width: 100%;
+    padding: 18px;
+    border-radius: 14px;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    margin-top: 8px;
+  }
+
+  .mint-btn.connect {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border: 1px solid var(--card-border);
+  }
+
+  .mint-btn.active {
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    color: #fff;
+  }
+
+  .mint-btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-2px); }
+  .mint-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* Status messages */
+  .status-msg {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    display: none;
+  }
+
+  .status-msg.show { display: block; }
+  .status-msg.success { background: rgba(80,220,130,0.12); border: 1px solid rgba(80,220,130,0.3); color: #50dc82; }
+  .status-msg.error { background: rgba(255,80,80,0.12); border: 1px solid rgba(255,80,80,0.3); color: #ff8080; }
+  .status-msg.pending { background: rgba(176,110,243,0.12); border: 1px solid rgba(176,110,243,0.3); color: var(--purple); }
+
+  /* ── BANNER ── */
+  .banner-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+  }
+
+  .banner-img {
+    width: 100%;
+    border-radius: 20px;
+    border: 1px solid var(--card-border);
+    display: block;
+  }
+
+  /* ── INFO CARDS ── */
+  .info-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+  }
+
+  .info-section h2 {
+    font-family: var(--font-display);
+    font-size: 36px;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .info-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 28px;
+    backdrop-filter: blur(12px);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .info-card:hover {
+    border-color: rgba(255,110,180,0.4);
+    transform: translateY(-4px);
+  }
+
+  .info-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(255,110,180,0.2), rgba(176,110,243,0.2));
+    border: 1px solid rgba(255,110,180,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .info-card h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .info-card p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--card-border);
+    padding: 32px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  footer a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  footer a:hover { color: var(--pink); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,110,180,0.15); }
+    50%       { box-shadow: 0 0 40px rgba(255,110,180,0.35), 0 0 80px rgba(176,110,243,0.2); }
+  }
+
+  .mint-card { animation: fadeUp 0.6s 0.2s ease both, pulse-glow 4s 1s ease-in-out infinite; }
+
+  /* loading spinner */
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 18px 24px; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 48px 24px 40px; gap: 40px; }
+    .hero-title { font-size: 54px; }
+    .banner-section, .info-section { padding: 0 24px 60px; }
+    .info-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 12px; padding: 24px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+<div class="noise"></div>
+
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">BaeBieZ</a>
+    <ul class="nav-links">
+      <li><a href="#mint">Mint</a></li>
+      <li><a href="https://twitter.com/baeapes" target="_blank">Twitter</a></li>
+      <li><a href="https://discord.gg/baeapes" target="_blank">Discord</a></li>
+      <li><a href="https://apescan.io/address/0xF1B281555cA4F0788b45FA9C9E84f2ac8bCB3981" target="_blank">Contract</a></li>
+    </ul>
+    <button class="nav-connect" id="navConnectBtn" onclick="connectWallet()">Connect Wallet</button>
+  </nav>
+
+  <!-- HERO + MINT CARD -->
+  <section class="hero" id="mint">
+    <div class="hero-left">
+      <div class="hero-tag">✦ Live on ApeChain</div>
+      <h1 class="hero-title">
+        Bae<span>BieZ</span><br />
+        by Bae Apes
+      </h1>
+      <p class="hero-sub">
+        4,444 unique BaeBieZ have landed on ApeChain. Each one is a little chaotic, a little iconic — and entirely yours. Mint yours now.
+      </p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-val" id="mintedCount">899</span>
+          <span class="stat-label">Minted</span>
+        </div>
+        <div class="stat">
+          <span class="stat-val">4,444</span>
+          <span class="stat-label">Total Supply</span>
+        </div>
+        <div class="stat">
+          <span class="stat-val">99 APE</span>
+          <span class="stat-label">Per NFT</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mint-card">
+      <div class="mint-card-title">Mint Your BaeBieZ</div>
+      <div class="mint-card-sub" id="walletSubtext">Connect your wallet to begin minting</div>
+
+      <div class="progress-section">
+        <div class="progress-labels">
+          <span><strong id="progressMinted">899</strong> minted</span>
+          <span><strong id="progressPct">20.2%</strong> complete</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 20.23%"></div>
+        </div>
+      </div>
+
+      <div class="qty-label">Quantity (max 20)</div>
+      <div class="qty-row">
+        <button class="qty-btn" id="qtyMinus" onclick="changeQty(-1)">−</button>
+        <div class="qty-num" id="qtyDisplay">1</div>
+        <button class="qty-btn" id="qtyPlus" onclick="changeQty(1)">+</button>
+      </div>
+
+      <div class="price-row">
+        <span class="price-label">Total cost</span>
+        <span class="price-val" id="totalPrice">99 APE</span>
+      </div>
+      <div class="price-row">
+        <span class="price-label">Network</span>
+        <span style="font-size:14px; font-weight:500;">ApeChain (Chain ID 33139)</span>
+      </div>
+
+      <button class="mint-btn connect" id="mainMintBtn" onclick="handleMintBtn()">
+        Connect Wallet to Mint
+      </button>
+
+      <div class="status-msg" id="statusMsg"></div>
+    </div>
+  </section>
+
+  <!-- BANNER IMAGE (placeholder - replace src with your actual banner) -->
+  <section class="banner-section">
+    <img
+      class="banner-img"
+      src="https://placehold.co/1200x400/1a1025/b06ef3?text=BaeBieZ+Banner+—+Replace+with+your+image"
+      alt="BaeBieZ collection banner"
+      id="bannerImg"
+    />
+  </section>
+
+  <!-- INFO CARDS -->
+  <section class="info-section">
+    <h2>Everything you need to know</h2>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-icon">🦍</div>
+        <h3>By Bae Apes</h3>
+        <p>BaeBieZ is the official spin-off collection by the Bae Apes team — same energy, fresh vibes, and built to grow the ecosystem.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">⛓️</div>
+        <h3>Native on ApeChain</h3>
+        <p>Deployed natively on ApeChain — fast, cheap, and deep in the APE ecosystem. Gas fees are minimal and transactions confirm in seconds.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">💎</div>
+        <h3>Mint Details</h3>
+        <p>99 APE per NFT. Up to 20 per transaction, re-mintable any time. 4,444 total supply on a first-come, first-served basis.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2025 BaeBieZ by Bae Apes. All rights reserved.</span>
+    <span>
+      <a href="https://apescan.io/address/0xF1B281555cA4F0788b45FA9C9E84f2ac8bCB3981" target="_blank">View Contract ↗</a>
+      &nbsp;·&nbsp;
+      <a href="https://twitter.com/baeapes" target="_blank">Twitter</a>
+      &nbsp;·&nbsp;
+      <a href="https://discord.gg/baeapes" target="_blank">Discord</a>
+    </span>
+  </footer>
+
+</div><!-- /wrap -->
+
+<!-- ethers.js v5 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const CONTRACT_ADDRESS = "0xF1B281555cA4F0788b45FA9C9E84f2ac8bCB3981";
+const MINT_PRICE_APE   = 99;           // APE per NFT
+const MAX_PER_TX       = 20;
+const TOTAL_SUPPLY     = 4444;
+const APECHAIN_ID      = 33139;
+const APECHAIN_PARAMS  = {
+  chainId: "0x8173",                   // 33139 in hex
+  chainName: "ApeChain",
+  nativeCurrency: { name: "APE", symbol: "APE", decimals: 18 },
+  rpcUrls: ["https://rpc.apechain.com/http"],
+  blockExplorerUrls: ["https://apescan.io"]
+};
+
+// Minimal ERC-721A ABI covering the mint + read functions used by w3lp-style contracts
+const ABI = [
+  "function mint(uint256 quantity) payable",
+  "function publicMint(uint256 quantity) payable",
+  "function totalSupply() view returns (uint256)",
+  "function maxSupply() view returns (uint256)",
+  "function cost() view returns (uint256)",
+  "function mintPrice() view returns (uint256)",
+  "function price() view returns (uint256)",
+  "function name() view returns (string)"
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let provider, signer, contract;
+let walletConnected = false;
+let qty = 1;
+let currentMinted = 899; // fallback — will refresh from contract
+
+// ── DOM HELPERS ───────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+
+function setStatus(msg, type) {
+  const el = $("statusMsg");
+  el.textContent = msg;
+  el.className = "status-msg show " + type;
+}
+
+function clearStatus() {
+  const el = $("statusMsg");
+  el.className = "status-msg";
+  el.textContent = "";
+}
+
+function updateQtyDisplay() {
+  $("qtyDisplay").textContent = qty;
+  $("qtyMinus").disabled = qty <= 1;
+  $("qtyPlus").disabled  = qty >= MAX_PER_TX;
+  const total = (qty * MINT_PRICE_APE).toLocaleString();
+  $("totalPrice").textContent = total + " APE";
+}
+
+function updateProgress(minted) {
+  const pct = ((minted / TOTAL_SUPPLY) * 100).toFixed(1);
+  $("mintedCount").textContent  = minted.toLocaleString();
+  $("progressMinted").textContent = minted.toLocaleString();
+  $("progressPct").textContent  = pct + "%";
+  $("progressFill").style.width = pct + "%";
+}
+
+// ── QUANTITY ──────────────────────────────────────────────────────────────────
+function changeQty(delta) {
+  qty = Math.min(MAX_PER_TX, Math.max(1, qty + delta));
+  updateQtyDisplay();
+}
+
+// ── WALLET ────────────────────────────────────────────────────────────────────
+async function connectWallet() {
+  if (!window.ethereum) {
+    setStatus("No Web3 wallet detected. Please install MetaMask or a wallet that supports ApeChain.", "error");
+    return;
+  }
+
+  try {
+    // Request accounts
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    // Switch / add ApeChain
+    const { chainId } = await provider.getNetwork();
+    if (chainId !== APECHAIN_ID) {
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: APECHAIN_PARAMS.chainId }]
+        });
+      } catch (switchErr) {
+        if (switchErr.code === 4902) {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [APECHAIN_PARAMS]
+          });
+        } else {
+          throw switchErr;
+        }
+      }
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+    }
+
+    signer   = provider.getSigner();
+    contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+    const addr = await signer.getAddress();
+    const short = addr.slice(0,6) + "..." + addr.slice(-4);
+
+    walletConnected = true;
+    $("navConnectBtn").textContent = short;
+    $("walletSubtext").textContent = "Wallet connected — ready to mint";
+
+    const btn = $("mainMintBtn");
+    btn.textContent = "Mint Now";
+    btn.className = "mint-btn active";
+
+    clearStatus();
+    await refreshSupply();
+
+  } catch (err) {
+    setStatus("Connection failed: " + (err.message || err), "error");
+  }
+}
+
+// ── SUPPLY ────────────────────────────────────────────────────────────────────
+async function refreshSupply() {
+  if (!contract) return;
+  try {
+    const total = await contract.totalSupply();
+    currentMinted = total.toNumber();
+    updateProgress(currentMinted);
+  } catch (_) { /* keep fallback value */ }
+}
+
+// ── MINT ──────────────────────────────────────────────────────────────────────
+async function handleMintBtn() {
+  if (!walletConnected) {
+    await connectWallet();
+    return;
+  }
+  await mint();
+}
+
+async function mint() {
+  if (!contract || !signer) return;
+
+  const btn = $("mainMintBtn");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Minting…';
+  setStatus("Waiting for wallet confirmation…", "pending");
+
+  try {
+    const pricePerNFT = ethers.utils.parseEther(MINT_PRICE_APE.toString());
+    const totalValue  = pricePerNFT.mul(qty);
+
+    // Try both common mint function names
+    let tx;
+    try {
+      tx = await contract.mint(qty, { value: totalValue });
+    } catch (e) {
+      if (e.code === "CALL_EXCEPTION" || e.message?.includes("mint")) {
+        tx = await contract.publicMint(qty, { value: totalValue });
+      } else {
+        throw e;
+      }
+    }
+
+    setStatus("Transaction submitted! Waiting for confirmation…", "pending");
+    btn.innerHTML = '<span class="spinner"></span>Confirming…';
+
+    const receipt = await tx.wait();
+    const txShort = receipt.transactionHash.slice(0,10) + "…";
+
+    setStatus(
+      `✓ Successfully minted ${qty} BaeBieZ! Tx: ${txShort}\n` +
+      `View on ApeScan: https://apescan.io/tx/${receipt.transactionHash}`,
+      "success"
+    );
+
+    btn.disabled = false;
+    btn.innerHTML = "Mint More";
+    btn.className = "mint-btn active";
+
+    await refreshSupply();
+
+  } catch (err) {
+    let msg = err?.reason || err?.data?.message || err?.message || "Transaction failed.";
+    if (msg.includes("insufficient funds")) msg = "Insufficient APE balance for this mint.";
+    if (msg.includes("user rejected"))      msg = "Transaction was rejected in your wallet.";
+    setStatus("Error: " + msg, "error");
+
+    btn.disabled = false;
+    btn.innerHTML = "Try Again";
+    btn.className = "mint-btn active";
+  }
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+updateQtyDisplay();
+updateProgress(currentMinted);
+
+// If wallet already connected (page refresh), reconnect silently
+if (window.ethereum?.selectedAddress) {
+  connectWallet().catch(() => {});
+}
+</script>
+
+</body>
+</html>
