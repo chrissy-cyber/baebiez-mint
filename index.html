@@ -447,10 +447,23 @@
 const CONTRACT_ADDRESS="0xb527E8637524c6fb192c8A113a4A39c2E688Fdb9";
 const TOTAL_SUPPLY=4444;
 const MINT_LOCKED=true;
+const APECHAIN_RPC="https://rpc.apechain.com/http";
 const APECHAIN_ID=33139;
-const APECHAIN_PARAMS={chainId:"0x8173",chainName:"ApeChain",nativeCurrency:{name:"APE",symbol:"APE",decimals:18},rpcUrls:["https://rpc.apechain.com/http"],blockExplorerUrls:["https://apescan.io"]};
+const APECHAIN_PARAMS={chainId:"0x8173",chainName:"ApeChain",nativeCurrency:{name:"APE",symbol:"APE",decimals:18},rpcUrls:[APECHAIN_RPC],blockExplorerUrls:["https://apescan.io"]};
 const PHASES={CLOSED:{price:0,maxPerTx:0},GTD:{price:31,maxPerTx:20},FCFS:{price:31,maxPerTx:20},PUBLIC:{price:99,maxPerTx:50}};
-const ABI=["function publicMint(uint256 quantity) payable","function totalMinted() view returns (uint256)","function getCurrentPhase() view returns (string)"];
+const ABI=[
+  "function publicMint(uint256 quantity) payable",
+  "function totalMinted() view returns (uint256)",
+  "function remainingSupply() view returns (uint256)",
+  "function mintedOnThisContract() view returns (uint256)",
+  "function PRIOR_MINTED() view returns (uint256)",
+  "function getCurrentPhase() view returns (string)",
+  "function gtdPrice() view returns (uint256)",
+  "function fcfsPrice() view returns (uint256)",
+  "function publicPrice() view returns (uint256)"
+];
+const READ_PROVIDER=new ethers.providers.JsonRpcProvider(APECHAIN_RPC);
+const readContract=new ethers.Contract(CONTRACT_ADDRESS,ABI,READ_PROVIDER);
 
 let provider,signer,contract,walletConnected=false,qty=1,currentPhase="CLOSED",currentMaxPerTx=50,currentPrice=99;
 const $=id=>document.getElementById(id);
@@ -465,10 +478,14 @@ function updateQtyDisplay(){
   $("totalPrice").textContent=MINT_LOCKED?"TBA":(qty*currentPrice).toLocaleString()+" APE";
 }
 
-function updateProgress(minted){
+function updateProgress(minted, remaining){
   const pct=((minted/TOTAL_SUPPLY)*100).toFixed(1);
   $("mintedCount").textContent=minted.toLocaleString() + " / " + TOTAL_SUPPLY.toLocaleString();
-  $("remainingCount").textContent=(TOTAL_SUPPLY-minted).toLocaleString();
+  if(typeof remaining!=="undefined"){
+    $("remainingCount").textContent=remaining.toLocaleString();
+  } else {
+    $("remainingCount").textContent=(TOTAL_SUPPLY-minted).toLocaleString();
+  }
   $("progressMinted").textContent=minted.toLocaleString();
   $("progressPct").textContent=pct+"%";
   $("progressFill").style.width=pct+"%";
@@ -549,12 +566,29 @@ async function connectWith(walletType){
 }
 
 async function refreshContractData(){
-  if(!contract)return;
   try{
-    const[minted,phase]=await Promise.all([contract.totalMinted().catch(()=>null),contract.getCurrentPhase().catch(()=>null)]);
-    if(minted!==null)updateProgress(minted.toNumber());
+    const [totalMinted, remaining, mintedThis, priorMinted, phase] = await Promise.all([
+      readContract.totalMinted().catch(()=>null),
+      readContract.remainingSupply().catch(()=>null),
+      readContract.mintedOnThisContract().catch(()=>null),
+      readContract.PRIOR_MINTED().catch(()=>null),
+      readContract.getCurrentPhase().catch(()=>null)
+    ]);
+    let displayMinted = null;
+    if(mintedThis!==null && priorMinted!==null){
+      displayMinted = mintedThis.add(priorMinted);
+    } else if(totalMinted!==null){
+      displayMinted = totalMinted;
+    }
+    if(displayMinted!==null){
+      updateProgress(displayMinted.toNumber(), remaining!==null?remaining.toNumber():undefined);
+    } else if(remaining!==null){
+      updateProgress(919, remaining.toNumber());
+    }
     if(phase!==null)updatePhaseUI(phase);
-  }catch(_){}
+  }catch(_){
+    updateProgress(919);
+  }
 }
 
 async function handleMintBtn(){if(!walletConnected){openWalletModal();return;}await mint();}
@@ -587,8 +621,8 @@ async function mint(){
 }
 
 updateQtyDisplay();
-updateProgress(919);
 updatePhaseUI("CLOSED");
+refreshContractData();
 if(CONTRACT_ADDRESS!=="YOUR_CONTRACT_ADDRESS_HERE")$("contractLink").href=`https://apescan.io/address/${CONTRACT_ADDRESS}`;
 if(window.ethereum?.selectedAddress)connectWith("metamask").catch(()=>{});
 </script>
