@@ -433,7 +433,7 @@
   <footer>
     <span>© 2025 BaeBieZ by Bae Apes. All rights reserved. &nbsp;·&nbsp; <a href="https://baeapes.com">baeapes.com</a></span>
     <span>
-      <a href="#" id="contractLink">Contract ↗</a> &nbsp;·&nbsp;
+      <a href="https://apescan.io/address/0xb527E8637524c6fb192c8A113a4A39c2E688Fdb9" id="contractLink" target="_blank">Contract ↗</a> &nbsp;·&nbsp;
       <a href="https://baeapes.stakeaway.io/" target="_blank">Staking</a> &nbsp;·&nbsp;
       <a href="https://x.com/BaeApes" target="_blank">Twitter / X</a> &nbsp;·&nbsp;
       <a href="https://discord.gg/qrWM2pTBS5" target="_blank">Discord</a>
@@ -442,7 +442,7 @@
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
 <script>
 const CONTRACT_ADDRESS="0xb527E8637524c6fb192c8A113a4A39c2E688Fdb9";
 const TOTAL_SUPPLY=4444;
@@ -451,19 +451,24 @@ const APECHAIN_RPC="https://rpc.apechain.com/http";
 const APECHAIN_ID=33139;
 const APECHAIN_PARAMS={chainId:"0x8173",chainName:"ApeChain",nativeCurrency:{name:"APE",symbol:"APE",decimals:18},rpcUrls:[APECHAIN_RPC],blockExplorerUrls:["https://apescan.io"]};
 const PHASES={CLOSED:{price:0,maxPerTx:0},GTD:{price:31,maxPerTx:20},FCFS:{price:31,maxPerTx:20},PUBLIC:{price:99,maxPerTx:50}};
+// write ABI (keeps mint signatures used when connected with signer)
 const ABI=[
   "function publicMint(uint256 quantity) payable",
-  "function totalMinted() view returns (uint256)",
-  "function remainingSupply() view returns (uint256)",
-  "function mintedOnThisContract() view returns (uint256)",
-  "function PRIOR_MINTED() view returns (uint256)",
-  "function getCurrentPhase() view returns (string)",
-  "function gtdPrice() view returns (uint256)",
-  "function fcfsPrice() view returns (uint256)",
-  "function publicPrice() view returns (uint256)"
+  "function mint(uint256 quantity) payable"
 ];
-const READ_PROVIDER=new ethers.providers.JsonRpcProvider(APECHAIN_RPC);
-const readContract=new ethers.Contract(CONTRACT_ADDRESS,ABI,READ_PROVIDER);
+// read-only ABI (JSON format) used by the read-only provider on page load
+const READ_ABI = [
+  {"inputs":[],"name":"totalMinted","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"remainingSupply","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"mintedOnThisContract","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"currentPhase","outputs":[{"type":"uint8"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"gtdPrice","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"fcfsPrice","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"publicPrice","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
+];
+const READ_PROVIDER=new ethers.JsonRpcProvider(APECHAIN_RPC);
+const readContract=new ethers.Contract(CONTRACT_ADDRESS,READ_ABI,READ_PROVIDER);
+const PRIOR_MINTED = 919; // historic minted count from prior contract
 
 let provider,signer,contract,walletConnected=false,qty=1,currentPhase="CLOSED",currentMaxPerTx=50,currentPrice=99;
 const $=id=>document.getElementById(id);
@@ -546,12 +551,12 @@ async function connectWith(walletType){
   if(!window.ethereum){setStatus("No Web3 wallet detected. Please install MetaMask or another compatible wallet.","error");return;}
   try{
     await window.ethereum.request({method:"eth_requestAccounts"});
-    provider=new ethers.providers.Web3Provider(window.ethereum);
+    provider=new ethers.BrowserProvider(window.ethereum);
     const{chainId}=await provider.getNetwork();
     if(chainId!==APECHAIN_ID){
       try{await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:APECHAIN_PARAMS.chainId}]});}
       catch(e){if(e.code===4902)await window.ethereum.request({method:"wallet_addEthereumChain",params:[APECHAIN_PARAMS]});else throw e;}
-      provider=new ethers.providers.Web3Provider(window.ethereum);
+      provider=new ethers.BrowserProvider(window.ethereum);
     }
     signer=provider.getSigner();
     contract=new ethers.Contract(CONTRACT_ADDRESS,ABI,signer);
@@ -567,27 +572,27 @@ async function connectWith(walletType){
 
 async function refreshContractData(){
   try{
-    const [totalMinted, remaining, mintedThis, priorMinted, phase] = await Promise.all([
+    const [totalMinted, remaining, mintedThis, phase] = await Promise.all([
       readContract.totalMinted().catch(()=>null),
       readContract.remainingSupply().catch(()=>null),
       readContract.mintedOnThisContract().catch(()=>null),
-      readContract.PRIOR_MINTED().catch(()=>null),
       readContract.getCurrentPhase().catch(()=>null)
     ]);
-    let displayMinted = null;
-    if(mintedThis!==null && priorMinted!==null){
-      displayMinted = mintedThis.add(priorMinted);
+    let displayMintedNum = null;
+    if(mintedThis!==null){
+      displayMintedNum = PRIOR_MINTED + Number(mintedThis);
     } else if(totalMinted!==null){
-      displayMinted = totalMinted;
+      displayMintedNum = Number(totalMinted);
     }
-    if(displayMinted!==null){
-      updateProgress(displayMinted.toNumber(), remaining!==null?remaining.toNumber():undefined);
-    } else if(remaining!==null){
-      updateProgress(919, remaining.toNumber());
+    const remainingNum = remaining!==null ? Number(remaining) : undefined;
+    if(displayMintedNum!==null){
+      updateProgress(displayMintedNum, remainingNum);
+    } else if(typeof remainingNum!=='undefined'){
+      updateProgress(PRIOR_MINTED, remainingNum);
     }
     if(phase!==null)updatePhaseUI(phase);
   }catch(_){
-    updateProgress(919);
+    updateProgress(PRIOR_MINTED);
   }
 }
 
@@ -601,7 +606,7 @@ async function mint(){
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Minting…';
   setStatus("Waiting for wallet confirmation…","pending");
   try{
-    const priceWei=ethers.utils.parseEther(currentPrice.toString());
+    const priceWei=ethers.parseEther(currentPrice.toString());
     const totalVal=priceWei.mul(qty);
     const tx=await contract.publicMint(qty,{value:totalVal});
     setStatus("Transaction submitted! Waiting for confirmation…","pending");
