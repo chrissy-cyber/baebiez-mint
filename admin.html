@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BaeBieZ Admin Panel</title>
+<meta name="description" content="Owner admin panel for BaeBieZ mint phase and contract management." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --pink:#ff6eb4; --purple:#b06ef3; --gold:#ffe066; --yellow:#ffde6d; --dark:#0d0a14;
+    --card-bg:rgba(255,255,255,0.08); --card-border:rgba(255,255,255,0.15);
+    --text:#fff; --muted:rgba(255,255,255,0.65);
+    --font-display:'Playfair Display',serif; --font-body:'DM Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 10%,rgba(176,110,243,.24),transparent 26%),radial-gradient(circle at 85% 15%,rgba(255,238,102,.14),transparent 24%),radial-gradient(circle at 50% 90%,rgba(255,110,180,.14),transparent 30%);pointer-events:none;z-index:0}
+  .wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:28px 24px 48px;}
+  .topbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:32px;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:24px;}
+  .brand{font-family:var(--font-display);font-size:32px;letter-spacing:-1px;line-height:1.1;background:linear-gradient(90deg,var(--pink),var(--purple),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .brand-sub{font-size:14px;color:var(--muted);margin-top:8px;max-width:620px;}
+  .connect-btn{background:linear-gradient(135deg,var(--purple),var(--pink));border:none;padding:14px 24px;border-radius:999px;color:#fff;font-weight:700;cursor:pointer;transition:transform .2s,opacity .2s;}
+  .connect-btn:hover{transform:translateY(-2px);opacity:.96}
+  .admin-grid{display:grid;grid-template-columns:1.8fr 1fr;gap:24px}
+  .admin-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:24px;padding:28px;backdrop-filter:blur(14px);box-shadow:0 0 40px rgba(0,0,0,.24);}
+  .admin-card h2{font-family:var(--font-display);font-size:22px;margin-bottom:14px;}
+  .admin-card p{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:20px;}
+  .admin-row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:14px;}
+  .admin-row label{font-size:13px;color:var(--muted);flex:1 1 100%;}
+  .admin-input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;font-size:14px;outline:none;}
+  .admin-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px;}
+  .admin-button{padding:12px 18px;border-radius:14px;border:none;font-weight:700;cursor:pointer;transition:transform .2s,opacity .2s;}
+  .admin-button.primary{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;}
+  .admin-button.gold{background:linear-gradient(135deg,var(--gold),rgba(255,222,109,.9));color:#0d0a14;}
+  .admin-button.destructive{background:rgba(255,80,80,.18);color:#ff9fa4;}
+  .admin-button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+  .status-bar{border-radius:16px;padding:18px 20px;margin-bottom:24px;font-size:14px;line-height:1.6;display:none;}
+  .status-bar.show{display:block}
+  .status-bar.pending{background:rgba(176,110,243,.15);border:1px solid rgba(176,110,243,.35);color:var(--purple);}
+  .status-bar.success{background:rgba(80,220,130,.12);border:1px solid rgba(80,220,130,.3);color:#b7ffcb;}
+  .status-bar.error{background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.3);color:#ffb1b1;}
+  .admin-info{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+  .info-tile{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:18px;}
+  .info-label{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:8px;}
+  .info-value{font-family:var(--font-display);font-size:20px;color:#fff;word-break:break-word;}
+  .phase-switch{display:flex;flex-wrap:wrap;gap:10px;}
+  .phase-switch button{flex:1 1 calc(50% - 10px);min-width:120px;}
+  .badge-owner{display:inline-block;padding:8px 16px;border-radius:999px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--text);}
+  .badge-owner.active{background:linear-gradient(135deg,var(--gold),rgba(255,222,109,.9));color:#0d0a14;border-color:rgba(255,222,109,.7);}
+  .admin-denied{background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.2);padding:24px;border-radius:24px;color:#fff;}
+  .admin-denied h3{font-size:20px;margin-bottom:8px;}
+  .admin-denied p{color:var(--muted);}
+  .footer{margin-top:36px;font-size:13px;color:var(--muted);text-align:center;}
+  @media(max-width:900px){.admin-grid{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}.admin-info{grid-template-columns:1fr}.phase-switch button{flex:1 1 100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <div class="brand">BaeBieZ Admin</div>
+      <div class="brand-sub">Owner-only panel for phase control, price updates, supply tracking, merkle root management, owner mints, and withdrawals.</div>
+    </div>
+    <button class="connect-btn" id="connectBtn" onclick="connectWallet()">Connect Wallet</button>
+  </div>
+
+  <div class="status-bar" id="statusBar"></div>
+
+  <div class="admin-denied" id="accessDenied" style="display:none;">
+    <h3>Access Denied</h3>
+    <p>Your connected wallet is not authorized to manage this panel. Please connect the owner wallet for access.</p>
+  </div>
+
+  <div id="adminContent" style="display:none;">
+    <div class="admin-info">
+      <div class="info-tile">
+        <div class="info-label">Connected Owner</div>
+        <div class="info-value" id="ownerAddress">—</div>
+      </div>
+      <div class="info-tile">
+        <div class="info-label">Current Phase</div>
+        <div class="info-value" id="currentPhase">—</div>
+      </div>
+      <div class="info-tile">
+        <div class="info-label">Contract Balance</div>
+        <div class="info-value" id="contractBalance">— APE</div>
+      </div>
+      <div class="info-tile">
+        <div class="info-label">Next Token ID</div>
+        <div class="info-value" id="currentTokenId">—</div>
+      </div>
+    </div>
+
+    <div class="admin-grid">
+      <section class="admin-card">
+        <h2>Phase Switcher</h2>
+        <p>Switch mint phases with a single click. Active phase is highlighted in gold.</p>
+        <div class="phase-switch">
+          <button class="admin-button gold" id="phaseBtnCLOSED" onclick="setPhase('CLOSED')">Closed</button>
+          <button class="admin-button gold" id="phaseBtnGTD" onclick="setPhase('GTD')">GTD</button>
+          <button class="admin-button gold" id="phaseBtnFCFS" onclick="setPhase('FCFS')">FCFS</button>
+          <button class="admin-button gold" id="phaseBtnPUBLIC" onclick="setPhase('PUBLIC')">Public</button>
+        </div>
+      </section>
+
+      <section class="admin-card">
+        <h2>Supply Tracker</h2>
+        <p>Keep an eye on total minted supply and remaining NFTs for the collection.</p>
+        <div class="admin-info">
+          <div class="info-tile"><div class="info-label">Total Minted</div><div class="info-value" id="mintedAmount">—</div></div>
+          <div class="info-tile"><div class="info-label">Remaining</div><div class="info-value" id="remainingAmount">—</div></div>
+        </div>
+        <button class="admin-button primary" onclick="refreshContractState()">Refresh Supply</button>
+      </section>
+
+      <section class="admin-card">
+        <h2>Price Updater</h2>
+        <p>Update mint prices in APE for GTD, FCFS, and Public phases.</p>
+        <div class="admin-row">
+          <label for="gtdPriceInput">GTD Price (APE)</label>
+          <input id="gtdPriceInput" class="admin-input" type="number" min="0" step="0.01" placeholder="31" />
+          <button class="admin-button primary" onclick="updatePrice('GTD')">Update</button>
+        </div>
+        <div class="admin-row">
+          <label for="fcfsPriceInput">FCFS Price (APE)</label>
+          <input id="fcfsPriceInput" class="admin-input" type="number" min="0" step="0.01" placeholder="31" />
+          <button class="admin-button primary" onclick="updatePrice('FCFS')">Update</button>
+        </div>
+        <div class="admin-row">
+          <label for="publicPriceInput">Public Price (APE)</label>
+          <input id="publicPriceInput" class="admin-input" type="number" min="0" step="0.01" placeholder="99" />
+          <button class="admin-button primary" onclick="updatePrice('PUBLIC')">Update</button>
+        </div>
+      </section>
+
+      <section class="admin-card">
+        <h2>Withdraw Funds</h2>
+        <p>Withdraw contract balance to the configured recipient wallet.</p>
+        <button class="admin-button destructive" onclick="withdrawFunds()">Withdraw</button>
+      </section>
+
+      <section class="admin-card">
+        <h2>Merkle Roots</h2>
+        <p>Set allowlist roots for GTD and FCFS mint phases.</p>
+        <div class="admin-row">
+          <label for="gtdMerkleInput">GTD Merkle Root</label>
+          <input id="gtdMerkleInput" class="admin-input" type="text" placeholder="0x..." />
+          <button class="admin-button primary" onclick="setMerkleRoot('GTD')">Set</button>
+        </div>
+        <div class="admin-row">
+          <label for="fcfsMerkleInput">FCFS Merkle Root</label>
+          <input id="fcfsMerkleInput" class="admin-input" type="text" placeholder="0x..." />
+          <button class="admin-button primary" onclick="setMerkleRoot('FCFS')">Set</button>
+        </div>
+      </section>
+
+      <section class="admin-card">
+        <h2>Owner Mint</h2>
+        <p>Mint directly to any wallet address from the owner account.</p>
+        <div class="admin-row">
+          <label for="ownerMintAddress">Recipient Wallet</label>
+          <input id="ownerMintAddress" class="admin-input" type="text" placeholder="0x..." />
+        </div>
+        <div class="admin-row">
+          <label for="ownerMintQty">Quantity</label>
+          <input id="ownerMintQty" class="admin-input" type="number" min="1" step="1" placeholder="1" />
+        </div>
+        <button class="admin-button gold" onclick="ownerMint()">Owner Mint</button>
+      </section>
+    </div>
+  </div>
+
+  <div class="footer">© 2025 BaeBieZ Administration. Keep this panel secure and only use the owner wallet listed in the contract.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+<script>
+const CONTRACT_ADDRESS = "0xb527E8637524c6fb192c8A113a4A39c2E688Fdb9";
+const OWNER_ADDRESS = "0x89c9fC9a481f2B8F68887712FF477C6Bc15Ff518".toLowerCase();
+const APECHAIN_ID = 33139;
+const APECHAIN_PARAMS = {chainId:"0x8173",chainName:"ApeChain",nativeCurrency:{name:"APE",symbol:"APE",decimals:18},rpcUrls:["https://rpc.apechain.com/http"],blockExplorerUrls:["https://apescan.io"]};
+const PHASE_VALUES = {CLOSED:0,GTD:1,FCFS:2,PUBLIC:3};
+const ABI = [
+  "function setPhase(uint8) external",
+  "function setGTDPrice(uint256) external",
+  "function setFCFSPrice(uint256) external",
+  "function setPublicPrice(uint256) external",
+  "function totalMinted() view returns (uint256)",
+  "function totalRemaining() view returns (uint256)",
+  "function getCurrentPhase() view returns (string)",
+  "function ownerMint(address,uint256) external",
+  "function withdraw() external",
+  "function setGTDMerkleRoot(bytes32) external",
+  "function setFCFSMerkleRoot(bytes32) external"
+];
+const START_TOKEN_ID = 920;
+let provider, signer, contract, walletAddress;
+const $ = id => document.getElementById(id);
+
+function setStatus(message, type) {
+  const el = $("statusBar");
+  el.textContent = message;
+  el.className = `status-bar show ${type}`;
+}
+function clearStatus() { const el = $("statusBar"); el.className = "status-bar"; el.textContent = ""; }
+function showOwnerContent(isOwner) {
+  $("adminContent").style.display = isOwner ? "block" : "none";
+  $("accessDenied").style.display = isOwner ? "none" : "block";
+}
+function setConnectedLabel(address) {
+  const short = address.slice(0,6) + "…" + address.slice(-4);
+  $("connectBtn").textContent = short;
+}
+
+async function connectWallet() {
+  if (!window.ethereum) {
+    setStatus("No Web3 wallet found. Install MetaMask or another supported wallet.", "error");
+    return;
+  }
+  try {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    const network = await provider.getNetwork();
+    if (network.chainId !== APECHAIN_ID) {
+      try {
+        await window.ethereum.request({ method: "wallet_switchEthereumChain", params:[{chainId:APECHAIN_PARAMS.chainId}] });
+      } catch (err) {
+        if (err.code === 4902) {
+          await window.ethereum.request({ method: "wallet_addEthereumChain", params:[APECHAIN_PARAMS] });
+        } else {
+          throw err;
+        }
+      }
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+    }
+    signer = provider.getSigner();
+    walletAddress = (await signer.getAddress()).toLowerCase();
+    setConnectedLabel(walletAddress);
+    contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+    const isOwner = walletAddress === OWNER_ADDRESS;
+    showOwnerContent(isOwner);
+    if (!isOwner) {
+      setStatus("Access Denied — connect the owner wallet to use this panel.", "error");
+      return;
+    }
+    clearStatus();
+    await refreshContractState();
+  } catch (err) {
+    const message = err?.message || "Connection failed.";
+    setStatus(message, "error");
+  }
+}
+
+async function refreshContractState() {
+  if (!contract) return;
+  try {
+    const [minted, remaining, phase, balance] = await Promise.all([
+      contract.totalMinted(),
+      contract.totalRemaining(),
+      contract.getCurrentPhase(),
+      provider.getBalance(CONTRACT_ADDRESS)
+    ]);
+    const mintedCount = minted.toNumber();
+    $("mintedAmount").textContent = mintedCount.toLocaleString();
+    $("remainingAmount").textContent = remaining.toNumber().toLocaleString();
+    $("currentPhase").textContent = phase;
+    $("contractBalance").textContent = ethers.utils.formatEther(balance) + " APE";
+    $("ownerAddress").textContent = walletAddress;
+    $("currentTokenId").textContent = (START_TOKEN_ID + mintedCount).toLocaleString();
+    highlightPhaseButton(phase);
+  } catch (err) {
+    setStatus("Unable to refresh contract state.", "error");
+  }
+}
+
+function highlightPhaseButton(phase) {
+  ["CLOSED","GTD","FCFS","PUBLIC"].forEach(p => {
+    const btn = $(`phaseBtn${p}`);
+    if (!btn) return;
+    btn.classList.toggle("badge-owner", p === phase);
+  });
+}
+
+async function setPhase(phase) {
+  if (!contract) return;
+  if (!PHASE_VALUES.hasOwnProperty(phase)) return;
+  try {
+    const tx = await contract.setPhase(PHASE_VALUES[phase]);
+    setStatus(`Phase update pending — waiting for confirmation.`, "pending");
+    await tx.wait();
+    setStatus(`Phase changed to ${phase}.`, "success");
+    await refreshContractState();
+  } catch (err) {
+    setStatus(err?.message || "Phase update failed.", "error");
+  }
+}
+
+async function updatePrice(type) {
+  if (!contract) return;
+  const input = $(type === 'GTD' ? 'gtdPriceInput' : type === 'FCFS' ? 'fcfsPriceInput' : 'publicPriceInput');
+  const value = input.value?.trim();
+  if (!value || Number(value) < 0) { setStatus('Enter a valid price.', 'error'); return; }
+  const weiValue = ethers.utils.parseEther(value);
+  try {
+    const fn = type === 'GTD' ? contract.setGTDPrice : type === 'FCFS' ? contract.setFCFSPrice : contract.setPublicPrice;
+    const tx = await fn(weiValue);
+    setStatus(`Updating ${type} price...`, "pending");
+    await tx.wait();
+    setStatus(`${type} price updated.`, "success");
+  } catch (err) {
+    setStatus(err?.message || `Failed to update ${type} price.`, "error");
+  }
+}
+
+async function setMerkleRoot(type) {
+  if (!contract) return;
+  const input = $(type === 'GTD' ? 'gtdMerkleInput' : 'fcfsMerkleInput');
+  const value = input.value?.trim();
+  if (!value || !value.startsWith('0x') || value.length !== 66) { setStatus('Enter a valid 32-byte hex root.', 'error'); return; }
+  try {
+    const fn = type === 'GTD' ? contract.setGTDMerkleRoot : contract.setFCFSMerkleRoot;
+    const tx = await fn(value);
+    setStatus(`Setting ${type} merkle root...`, "pending");
+    await tx.wait();
+    setStatus(`${type} merkle root updated.`, "success");
+  } catch (err) {
+    setStatus(err?.message || `Failed to set ${type} merkle root.`, "error");
+  }
+}
+
+async function ownerMint() {
+  if (!contract) return;
+  const address = $("ownerMintAddress").value.trim();
+  const qty = Number($("ownerMintQty").value);
+  if (!ethers.utils.isAddress(address)) { setStatus('Enter a valid recipient address.', 'error'); return; }
+  if (!qty || qty < 1) { setStatus('Enter a mint quantity of at least 1.', 'error'); return; }
+  try {
+    const tx = await contract.ownerMint(address, qty);
+    setStatus('Mint transaction pending...', 'pending');
+    await tx.wait();
+    setStatus(`Minted ${qty} token(s) to ${address}.`, 'success');
+    await refreshContractState();
+  } catch (err) {
+    setStatus(err?.message || 'Owner mint failed.', 'error');
+  }
+}
+
+async function withdrawFunds() {
+  if (!contract) return;
+  try {
+    const tx = await contract.withdraw();
+    setStatus('Withdrawal pending...', 'pending');
+    await tx.wait();
+    setStatus('Withdrawal confirmed.', 'success');
+    await refreshContractState();
+  } catch (err) {
+    setStatus(err?.message || 'Withdrawal failed.', 'error');
+  }
+}
+
+if (window.ethereum) {
+  window.ethereum.on('accountsChanged', () => { connectWallet(); });
+  window.ethereum.on('chainChanged', () => { connectWallet(); });
+}
+</script>
+</body>
+</html>

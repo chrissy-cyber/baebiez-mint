@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BaeBieZ — Mint Now | by Bae Apes</title>
+<meta name="description" content="Mint your BaeBieZ NFT. 4,444 unique collectibles on ApeChain by Bae Apes. Monthly APE royalties, staking, metaverse, and more." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --pink:#ff6eb4;--purple:#b06ef3;--orange:#ff9f5a;--yellow:#ffe066;--green:#50dc82;
+    --dark:#0d0a14;--card-bg:rgba(255,255,255,0.06);--card-border:rgba(255,255,255,0.12);
+    --text:#fff;--muted:rgba(255,255,255,0.55);
+    --font-display:'Playfair Display',serif;--font-body:'DM Sans',sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-height:100vh;overflow-x:hidden}
+  .bg-mesh{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 10% 20%,rgba(176,110,243,.35) 0%,transparent 65%),radial-gradient(ellipse 70% 50% at 90% 80%,rgba(255,110,180,.3) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 60% 10%,rgba(255,159,90,.18) 0%,transparent 55%),#0d0a14;pointer-events:none}
+  .noise{position:fixed;inset:0;z-index:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none}
+  .wrap{position:relative;z-index:1}
+
+  /* NAV */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid var(--card-border);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;background:rgba(13,10,20,.75)}
+  .nav-logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none}
+  .nav-logo-img{height:36px;width:36px;object-fit:contain}
+  .nav-logo-text{font-family:var(--font-display);font-size:22px;font-weight:700;background:linear-gradient(90deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
+  .nav-links{display:flex;gap:28px;list-style:none}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .2s}
+  .nav-links a:hover{color:#fff}
+  .nav-connect{background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;font-family:var(--font-body);font-size:14px;font-weight:500;padding:10px 22px;border-radius:50px;cursor:pointer;transition:opacity .2s,transform .15s;white-space:nowrap}
+  .nav-connect:hover{opacity:.88;transform:translateY(-1px)}
+
+  /* LOGO HERO */
+  .logo-hero{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px 32px;text-align:center}
+  .logo-hero-img{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 0 30px rgba(255,110,180,.4));margin-bottom:16px;animation:fadeUp .6s ease both}
+  .logo-hero-fallback{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,rgba(255,110,180,.2),rgba(176,110,243,.2));border:2px solid rgba(255,110,180,.4);display:flex;align-items:center;justify-content:center;font-size:52px;margin-bottom:16px;animation:fadeUp .6s ease both}
+  .logo-hero-title{font-family:var(--font-display);font-size:clamp(36px,5vw,56px);font-weight:700;background:linear-gradient(135deg,var(--pink),var(--purple),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;margin-bottom:8px;animation:fadeUp .6s .1s ease both}
+  .logo-hero-sub{font-size:15px;color:var(--muted);letter-spacing:.08em;animation:fadeUp .6s .2s ease both}
+
+  /* BANNER */
+  .banner-section{width:100%;overflow:hidden;border-top:1px solid var(--card-border);border-bottom:1px solid var(--card-border);background:linear-gradient(135deg,rgba(255,110,180,.1),rgba(176,110,243,.1))}
+  .banner-img{width:100%;height:auto;display:block;object-fit:contain}
+
+  /* SECTIONS */
+  .section-wrap{max-width:1200px;margin:0 auto;padding:56px 48px 0}
+  .section-title{font-family:var(--font-display);font-size:36px;margin-bottom:12px;text-align:center}
+  .section-sub{font-size:15px;color:var(--muted);text-align:center;margin-bottom:36px;line-height:1.6}
+
+  /* PHASES */
+  .phase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:64px}
+  .phase-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;padding:24px;backdrop-filter:blur(12px);position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
+  .phase-card:hover{transform:translateY(-3px)}
+  .phase-card.active{border-color:var(--pink);box-shadow:0 0 30px rgba(255,110,180,.2)}
+  .phase-card.upcoming{opacity:.65}
+  .phase-card.ended{opacity:.4}
+  .phase-card.locked{opacity:.58;filter:grayscale(.35)}
+  .phase-card.locked:hover{transform:none}
+  .phase-card::before{content:'';position:absolute;top:-1px;left:0;right:0;height:2px;border-radius:18px 18px 0 0}
+  .phase-card.gtd::before{background:linear-gradient(90deg,var(--pink),var(--purple))}
+  .phase-card.fcfs::before{background:linear-gradient(90deg,var(--purple),var(--orange))}
+  .phase-card.public::before{background:linear-gradient(90deg,var(--orange),var(--yellow))}
+  .phase-badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;padding:4px 12px;border-radius:50px;margin-bottom:14px}
+  .phase-badge.live{background:rgba(80,220,130,.15);color:var(--green);border:1px solid rgba(80,220,130,.35)}
+  .phase-badge.next{background:rgba(255,159,90,.15);color:var(--orange);border:1px solid rgba(255,159,90,.35)}
+  .phase-badge.soon{background:rgba(176,110,243,.15);color:var(--purple);border:1px solid rgba(176,110,243,.35)}
+  .phase-badge.ended2{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--card-border)}
+  .phase-name{font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:6px}
+  .phase-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+  .phase-details{display:flex;flex-direction:column;gap:8px}
+  .phase-detail-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+  .phase-detail-label{color:var(--muted)}
+  .phase-detail-val{font-weight:500;color:#fff}
+
+  /* HERO + MINT */
+  .hero{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;padding:0 48px 80px;max-width:1200px;margin:0 auto}
+  .hero-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--pink);border:1px solid rgba(255,110,180,.4);padding:6px 16px;border-radius:50px;margin-bottom:24px;animation:fadeUp .6s ease both}
+  .hero-title{font-family:var(--font-display);font-size:clamp(48px,5vw,80px);font-weight:700;line-height:.95;letter-spacing:-2px;margin-bottom:24px;animation:fadeUp .6s .1s ease both}
+  .hero-title span{background:linear-gradient(135deg,var(--pink) 0%,var(--purple) 50%,var(--orange) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-style:italic}
+  .hero-sub{font-size:15px;font-weight:300;color:var(--muted);line-height:1.75;max-width:460px;margin-bottom:40px;animation:fadeUp .6s .2s ease both}
+  .hero-stats{display:flex;gap:32px;animation:fadeUp .6s .3s ease both}
+  .stat{display:flex;flex-direction:column;gap:4px}
+  .stat-val{font-family:var(--font-display);font-size:28px;font-weight:700}
+  .stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+
+  /* MINT CARD */
+  .mint-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:24px;padding:40px;backdrop-filter:blur(20px);animation:fadeUp .6s .2s ease both,pulse-glow 4s 1s ease-in-out infinite;position:relative;overflow:hidden}
+  .mint-card::before{content:'';position:absolute;top:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--pink),var(--purple),var(--orange));border-radius:24px 24px 0 0}
+  .mint-card-title{font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:6px}
+  .mint-card-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+  .mint-phase-indicator{display:flex;align-items:center;gap:10px;background:rgba(80,220,130,.08);border:1px solid rgba(80,220,130,.2);border-radius:10px;padding:10px 14px;margin-bottom:24px;font-size:13px}
+  .mint-phase-indicator.locked{background:rgba(255,159,90,.08);border-color:rgba(255,159,90,.24);color:var(--orange)}
+  .mint-phase-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(80,220,130,.8);flex-shrink:0;animation:blink 1.5s ease-in-out infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+  .progress-section{margin-bottom:28px}
+  .progress-labels{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:10px}
+  .progress-labels strong{color:#fff;font-weight:500}
+  .progress-bar{height:8px;background:rgba(255,255,255,.08);border-radius:50px;overflow:hidden}
+  .progress-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--pink),var(--purple));transition:width 1s ease}
+  .qty-label{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+  .qty-row{display:flex;align-items:center;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:14px;overflow:hidden;margin-bottom:20px}
+  .qty-btn{background:none;border:none;color:#fff;font-size:22px;font-weight:300;width:56px;height:56px;cursor:pointer;transition:background .15s;flex-shrink:0}
+  .qty-btn:hover{background:rgba(255,255,255,.08)}
+  .qty-btn:disabled{opacity:.3;cursor:not-allowed}
+  .qty-num{flex:1;text-align:center;font-family:var(--font-display);font-size:28px;font-weight:700;user-select:none}
+  .price-row{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:rgba(255,255,255,.04);border-radius:12px;margin-bottom:10px;border:1px solid rgba(255,255,255,.06)}
+  .price-label{font-size:14px;color:var(--muted)}
+  .price-val{font-family:var(--font-display);font-size:22px;font-weight:700;background:linear-gradient(90deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+  /* WALLET MODAL */
+  .wallet-modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center}
+  .wallet-modal-overlay.show{display:flex}
+  .wallet-modal{background:#1a1424;border:1px solid var(--card-border);border-radius:24px;padding:36px;width:380px;max-width:95vw;animation:fadeUp .3s ease both}
+  .wallet-modal h3{font-family:var(--font-display);font-size:22px;margin-bottom:8px}
+  .wallet-modal p{font-size:13px;color:var(--muted);margin-bottom:24px}
+  .wallet-options{display:flex;flex-direction:column;gap:10px}
+  .wallet-option{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:14px;padding:14px 18px;cursor:pointer;transition:border-color .2s,background .2s;font-size:15px;font-weight:500;color:#fff}
+  .wallet-option:hover{border-color:var(--pink);background:rgba(255,110,180,.08)}
+  .wallet-option-icon{width:32px;height:32px;border-radius:8px;font-size:22px;display:flex;align-items:center;justify-content:center}
+  .modal-close{margin-top:16px;width:100%;padding:12px;background:transparent;border:1px solid var(--card-border);color:var(--muted);border-radius:12px;cursor:pointer;font-family:var(--font-body);font-size:14px;transition:color .2s}
+  .modal-close:hover{color:#fff}
+  .mint-btn{width:100%;padding:18px;border-radius:14px;border:none;font-family:var(--font-body);font-size:16px;font-weight:500;letter-spacing:.03em;cursor:pointer;transition:opacity .2s,transform .15s;margin-top:8px}
+  .mint-btn.connect{background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--card-border)}
+  .mint-btn.active{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff}
+  .mint-btn:hover:not(:disabled){opacity:.88;transform:translateY(-2px)}
+  .mint-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  .status-msg{margin-top:16px;padding:14px 18px;border-radius:10px;font-size:14px;line-height:1.6;display:none}
+  .status-msg.show{display:block}
+  .status-msg.success{background:rgba(80,220,130,.12);border:1px solid rgba(80,220,130,.3);color:var(--green)}
+  .status-msg.error{background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.3);color:#ff8080}
+  .status-msg.pending{background:rgba(176,110,243,.12);border:1px solid rgba(176,110,243,.3);color:var(--purple)}
+
+  /* ABOUT */
+  .about-section{max-width:1200px;margin:0 auto;padding:0 48px 80px}
+  .about-inner{background:var(--card-bg);border:1px solid var(--card-border);border-radius:24px;padding:48px;backdrop-filter:blur(12px);position:relative;overflow:hidden}
+  .about-inner::before{content:'';position:absolute;top:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--pink),var(--purple),var(--orange))}
+  .about-inner p{font-size:15px;color:var(--muted);line-height:1.85;max-width:800px;margin:0 auto;text-align:center}
+  .about-inner p strong{color:#fff}
+
+  /* UTILITIES */
+  .utilities-section{max-width:1200px;margin:0 auto;padding:0 48px 80px}
+  .util-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .util-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;padding:28px;backdrop-filter:blur(12px);transition:border-color .2s,transform .2s}
+  .util-card:hover{border-color:rgba(255,110,180,.45);transform:translateY(-5px)}
+  .util-card.featured{border-color:rgba(255,110,180,.35);background:linear-gradient(135deg,rgba(255,110,180,.08),rgba(176,110,243,.08))}
+  .util-icon{font-size:32px;margin-bottom:16px;display:block;filter:drop-shadow(0 0 8px rgba(255,110,180,.4))}
+  .util-title{font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:8px}
+  .util-desc{font-size:13px;color:var(--muted);line-height:1.7}
+  .util-desc strong{color:#fff}
+  .util-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:50px;margin-top:12px}
+  .util-tag.hot{background:rgba(255,110,180,.15);color:var(--pink);border:1px solid rgba(255,110,180,.3)}
+  .util-tag.new{background:rgba(80,220,130,.12);color:var(--green);border:1px solid rgba(80,220,130,.3)}
+  .util-tag.coming{background:rgba(255,159,90,.12);color:var(--orange);border:1px solid rgba(255,159,90,.3)}
+
+  /* STAKING */
+  .staking-section{max-width:1200px;margin:0 auto;padding:0 48px 80px}
+  .staking-card{background:linear-gradient(135deg,rgba(176,110,243,.15),rgba(255,110,180,.1));border:1px solid rgba(176,110,243,.35);border-radius:24px;padding:48px;display:flex;align-items:center;justify-content:space-between;gap:40px;backdrop-filter:blur(12px);position:relative;overflow:hidden}
+  .staking-card::before{content:'';position:absolute;top:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--pink))}
+  .staking-left{flex:1}
+  .staking-eyebrow{font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--purple);margin-bottom:12px}
+  .staking-title{font-family:var(--font-display);font-size:32px;font-weight:700;margin-bottom:12px;line-height:1.1}
+  .staking-title span{background:linear-gradient(90deg,var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .staking-desc{font-size:14px;color:var(--muted);line-height:1.7;max-width:480px;margin-bottom:24px}
+  .staking-perks{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+  .staking-perk{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--muted)}
+  .staking-perk::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0;margin-top:1px}
+  .staking-btn{display:inline-block;padding:14px 32px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;text-decoration:none;border-radius:50px;font-size:15px;font-weight:500;transition:opacity .2s,transform .15s}
+  .staking-btn:hover{opacity:.88;transform:translateY(-2px)}
+  .staking-token{background:rgba(176,110,243,.12);border:1px solid rgba(176,110,243,.3);border-radius:20px;padding:28px;text-align:center;min-width:200px;flex-shrink:0}
+  .staking-token-icon{font-size:48px;margin-bottom:12px;display:block}
+  .staking-token-name{font-family:var(--font-display);font-size:22px;font-weight:700;margin-bottom:4px}
+  .staking-token-sub{font-size:12px;color:var(--muted)}
+
+  /* CHARITY */
+  .charity-section{max-width:1200px;margin:0 auto;padding:0 48px 80px}
+  .charity-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:24px;padding:48px;backdrop-filter:blur(12px);display:flex;align-items:center;gap:48px;position:relative;overflow:hidden}
+  .charity-card::before{content:'';position:absolute;top:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--purple))}
+  .charity-icon-wrap{font-size:64px;flex-shrink:0;text-align:center}
+  .charity-content{flex:1}
+  .charity-eyebrow{font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:10px}
+  .charity-title{font-family:var(--font-display);font-size:28px;font-weight:700;margin-bottom:12px}
+  .charity-desc{font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:16px}
+  .charity-partners{display:flex;gap:12px;flex-wrap:wrap}
+  .charity-partner{background:rgba(80,220,130,.1);border:1px solid rgba(80,220,130,.25);border-radius:50px;padding:6px 16px;font-size:13px;font-weight:500;color:var(--green)}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--card-border);padding:32px 48px;display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;font-size:13px;color:var(--muted)}
+  footer a{color:var(--muted);text-decoration:none;transition:color .2s}
+  footer a:hover{color:var(--pink)}
+
+  /* ANIMATIONS */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(255,110,180,.15)}50%{box-shadow:0 0 40px rgba(255,110,180,.35),0 0 80px rgba(176,110,243,.2)}}
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* RESPONSIVE */
+  @media(max-width:900px){
+    nav{padding:18px 24px}
+    .nav-links{display:none}
+    .section-wrap,.about-section,.utilities-section,.staking-section,.charity-section{padding-left:24px;padding-right:24px}
+    .phase-grid,.util-grid{grid-template-columns:1fr}
+    .hero{grid-template-columns:1fr;padding:32px 24px 48px;gap:40px}
+    .hero-title{font-size:52px}
+    .staking-card{flex-direction:column;padding:32px}
+    .staking-token{min-width:auto;width:100%}
+    .charity-card{flex-direction:column;padding:32px;text-align:center}
+    .charity-partners{justify-content:center}
+    footer{flex-direction:column;gap:12px;padding:24px;text-align:center}
+  }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="noise"></div>
+
+<!-- WALLET MODAL -->
+<div class="wallet-modal-overlay" id="walletModal">
+  <div class="wallet-modal">
+    <h3>Connect Wallet</h3>
+    <p>Choose your wallet to connect to ApeChain and start minting.</p>
+    <div class="wallet-options">
+      <div class="wallet-option" onclick="connectWith('metamask')"><div class="wallet-option-icon">🦊</div>MetaMask</div>
+      <div class="wallet-option" onclick="connectWith('walletconnect')"><div class="wallet-option-icon">🔗</div>WalletConnect</div>
+      <div class="wallet-option" onclick="connectWith('coinbase')"><div class="wallet-option-icon">🔵</div>Coinbase Wallet</div>
+    </div>
+    <button class="modal-close" onclick="closeWalletModal()">Cancel</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo-wrap">
+      <img src="BaeBiez_Logo.png" class="nav-logo-img" alt="BaeBieZ Logo" onerror="this.style.display='none'">
+      <span class="nav-logo-text">BaeBieZ</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#mint">Mint</a></li>
+      <li><a href="#phases">Phases</a></li>
+      <li><a href="#utilities">Utility</a></li>
+      <li><a href="https://baeapes.stakeaway.io/" target="_blank">Staking</a></li>
+      <li><a href="https://x.com/BaeApes" target="_blank">Twitter / X</a></li>
+      <li><a href="https://discord.gg/qrWM2pTBS5" target="_blank">Discord</a></li>
+    </ul>
+    <button class="nav-connect" id="navConnectBtn" onclick="openWalletModal()">Connect Wallet</button>
+  </nav>
+
+  <!-- LOGO HERO -->
+  <div class="logo-hero">
+    <img src="BaeBiez_Logo.png" class="logo-hero-img" alt="BaeBieZ Logo"
+      onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex'">
+    <div class="logo-hero-fallback" id="logoFallback" style="display:none">🐒</div>
+    <div class="logo-hero-title">BaeBieZ</div>
+    <div class="logo-hero-sub">by Bae Apes &nbsp;·&nbsp; ApeChain &nbsp;·&nbsp; 4,444 Supply</div>
+  </div>
+
+  <!-- BANNER -->
+  <section class="banner-section">
+    <img src="BaeBiez_Banner.png" class="banner-img" alt="BaeBieZ Banner" onerror="this.style.display='none'">
+  </section>
+
+  <!-- PHASES -->
+  <section class="section-wrap" id="phases">
+    <h2 class="section-title">Mint Phases</h2>
+    <p class="section-sub">Three phases, one collection. Check which phase is active and get ready to mint.</p>
+    <div class="phase-grid">
+      <div class="phase-card gtd" id="phaseCardGTD">
+        <div class="phase-badge soon" id="phaseBadgeGTD">COMING SOON</div>
+        <div class="phase-name">GTD Mint</div>
+        <div class="phase-desc">Guaranteed mint for allowlisted wallets. Secure your BaeBieZ before anyone else.</div>
+        <div class="phase-details">
+          <div class="phase-detail-row"><span class="phase-detail-label">Price</span><span class="phase-detail-val">31 APE</span></div>
+          <div class="phase-detail-row"><span class="phase-detail-label">Max per wallet</span><span class="phase-detail-val">20</span></div>
+          <div class="phase-detail-row"><span class="phase-detail-label">Access</span><span class="phase-detail-val">Allowlist only</span></div>
+        </div>
+      </div>
+      <div class="phase-card fcfs" id="phaseCardFCFS">
+        <div class="phase-badge soon" id="phaseBadgeFCFS">COMING SOON</div>
+        <div class="phase-name">FCFS Mint</div>
+        <div class="phase-desc">First come, first served for allowlisted wallets. Same great price — move fast.</div>
+        <div class="phase-details">
+          <div class="phase-detail-row"><span class="phase-detail-label">Price</span><span class="phase-detail-val">31 APE</span></div>
+          <div class="phase-detail-row"><span class="phase-detail-label">Max per wallet</span><span class="phase-detail-val">20</span></div>
+          <div class="phase-detail-row"><span class="phase-detail-label">Access</span><span class="phase-detail-val">Allowlist only</span></div>
+        </div>
+      </div>
+      <div class="phase-card public" id="phaseCardPUBLIC">
+        <div class="phase-badge soon" id="phaseBadgePUBLIC">COMING SOON</div>
+        <div class="phase-name">Public Mint</div>
+        <div class="phase-desc">Open to everyone. No allowlist needed — just connect your wallet and mint.</div>
+        <div class="phase-details">
+          <div class="phase-detail-row"><span class="phase-detail-label">Price</span><span class="phase-detail-val">99 APE</span></div>
+          <div class="phase-detail-row"><span class="phase-detail-label">Max per wallet</span><span class="phase-detail-val">50</span></div>
+          <div class="phase-detail-row"><span class="phase-detail-label">Access</span><span class="phase-detail-val">Open to all</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERO + MINT -->
+  <section class="hero" id="mint">
+    <div class="hero-left">
+      <div class="hero-tag">✦ Launching on ApeChain</div>
+      <h1 class="hero-title">Bae<span>BieZ</span><br/>by Bae Apes</h1>
+      <p class="hero-sub">4,444 uniquely generated NFTs crafted with over 260+ hand-drawn traits. A bold new chapter — from ultra-rare 1:1 masterpieces to callbacks to our OG collection. Unlike anything on the blockchain.</p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-val" id="mintedCount">919 / 4,444</span><span class="stat-label">MINTED</span></div>
+        <div class="stat"><span class="stat-val" id="remainingCount">3,525</span><span class="stat-label">Remaining</span></div>
+        <div class="stat"><span class="stat-val">4,444</span><span class="stat-label">Total Supply</span></div>
+      </div>
+    </div>
+    <div class="mint-card">
+      <div class="mint-card-title">Mint Your BaeBieZ</div>
+      <div class="mint-card-sub" id="walletSubtext">Connect your wallet to begin minting</div>
+      <div class="mint-phase-indicator">
+        <span id="phaseIndicatorText">Mint phases opening soon — stay tuned</span>
+      </div>
+      <div class="progress-section">
+        <div class="progress-labels">
+          <span><strong id="progressMinted">—</strong> minted</span>
+          <span><strong id="progressPct">—%</strong> complete</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      </div>
+      <div class="qty-label">Quantity (max <span id="maxQtyLabel">50</span>)</div>
+      <div class="qty-row">
+        <button class="qty-btn" id="qtyMinus" onclick="changeQty(-1)">−</button>
+        <div class="qty-num" id="qtyDisplay">1</div>
+        <button class="qty-btn" id="qtyPlus" onclick="changeQty(1)">+</button>
+      </div>
+      <div class="price-row"><span class="price-label">Total cost</span><span class="price-val" id="totalPrice">TBA</span></div>
+      <div class="price-row"><span class="price-label">Network</span><span style="font-size:14px;font-weight:500">ApeChain (Chain ID 33139)</span></div>
+      <button class="mint-btn connect" id="mainMintBtn" disabled>Mint Coming Soon</button>
+      <div class="status-msg" id="statusMsg"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about-section">
+    <div class="about-inner">
+      <p><strong>BaeBieZ</strong> is a vibrant and exclusive collection of 4,444 uniquely generated NFTs, each crafted with over <strong>260+ meticulously hand-drawn traits</strong>. This unisex baby ape series represents a bold evolution — unlike anything we've launched before and unlike anything currently on the blockchain. From ultra-rare <strong>1:1 masterpieces</strong> to subtle callbacks to our original OG collection, BaeBieZ offers an unparalleled fusion of creativity, lore, and innovation. Created with passion and delivered with love — <strong>our holders are our co-founders in every step of the way.</strong></p>
+    </div>
+  </section>
+
+  <!-- UTILITIES -->
+  <section class="utilities-section" id="utilities">
+    <h2 class="section-title">Utility &amp; Vision</h2>
+    <p class="section-sub">Holding a BaeBieZ isn't just owning an NFT — it's joining an ecosystem built to reward you for life.</p>
+    <div class="util-grid">
+      <div class="util-card featured">
+        <span class="util-icon">💰</span>
+        <div class="util-title">Monthly APE Royalties</div>
+        <div class="util-desc"><strong>100% royalty distribution</strong> — paid out in ApeCoin every single month to all holders. Passive income, made simple. Just hold and earn.</div>
+        <span class="util-tag hot">🔥 Top Perk</span>
+      </div>
+      <div class="util-card">
+        <span class="util-icon">🎭</span>
+        <div class="util-title">3D Avatars on OtherSide</div>
+        <div class="util-desc">BaeBieZ holders will receive <strong>exclusive 3D avatars</strong> coming to the OtherSide metaverse — your BaeBieZ, fully realized in 3D and ready to explore.</div>
+        <span class="util-tag coming">Coming Soon</span>
+      </div>
+      <div class="util-card">
+        <span class="util-icon">👗</span>
+        <div class="util-title">Free 3D Wearables</div>
+        <div class="util-desc">Claim <strong>free 3D wearables</strong> from our unisex fashion line — ready to rock your avatar in style across the metaverse. PC &amp; mobile compatible.</div>
+        <span class="util-tag new">Free for Holders</span>
+      </div>
+      <div class="util-card">
+        <span class="util-icon">🌐</span>
+        <div class="util-title">Immersive Metaverse Gallery</div>
+        <div class="util-desc">A <strong>2-story immersive metaverse art gallery</strong> featuring all 3 Bae collections. Live music, events, lounges &amp; the exclusive <strong>Bae Bar</strong>. Fully PC &amp; mobile compatible.</div>
+      </div>
+      <div class="util-card">
+        <span class="util-icon">🎨</span>
+        <div class="util-title">Monthly Art Contest</div>
+        <div class="util-desc">Submit your art monthly for a chance to have it turned into a <strong>custom NFT airdropped to your wallet</strong>. Winners also receive their art printed on a hoodie, t-shirt, poster, or canvas — <strong>shipped free</strong> to your door.</div>
+        <span class="util-tag hot">Monthly</span>
+      </div>
+      <div class="util-card">
+        <span class="util-icon">📚</span>
+        <div class="util-title">Published Books on Amazon</div>
+        <div class="util-desc">Our exclusive <strong>coloring, activity &amp; educational books</strong> are now available on Amazon. Holders receive <strong>free claims</strong>. A portion of every sale goes directly to our charity partners.</div>
+        <span class="util-tag new">Free Claims</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STAKING -->
+  <section class="staking-section">
+    <div class="staking-card">
+      <div class="staking-left">
+        <div class="staking-eyebrow">⚡ Gas-Less Soft Staking</div>
+        <div class="staking-title">Stake &amp; Earn<br/><span>$BAEZ Tokens</span></div>
+        <div class="staking-desc">Our fully integrated staking platform automatically detects when you mint or sweep — so you never have to re-stake. Earn $BAEZ tokens hourly per NFT, then spend them in the built-in marketplace. All 4 Bae collections fully supported.</div>
+        <div class="staking-perks">
+          <div class="staking-perk">Gas-less soft staking — no transactions needed</div>
+          <div class="staking-perk">Auto-detects new mints — start earning immediately</div>
+          <div class="staking-perk">Earn $BAEZ ERC-20 tokens hourly per NFT staked</div>
+          <div class="staking-perk">Integrated marketplace built right into the staking site</div>
+          <div class="staking-perk">Bae Apes, ZomBaes, Exclusives &amp; BaeBieZ all supported</div>
+        </div>
+        <a href="https://baeapes.stakeaway.io/" target="_blank" class="staking-btn">Visit Staking Site ↗</a>
+      </div>
+      <div class="staking-token">
+        <span class="staking-token-icon">🪙</span>
+        <div class="staking-token-name">$BAEZ</div>
+        <div class="staking-token-sub">ERC-20 Staking Token<br/>on Ethereum</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHARITY -->
+  <section class="charity-section">
+    <div class="charity-card">
+      <div class="charity-icon-wrap">🤝</div>
+      <div class="charity-content">
+        <div class="charity-eyebrow">Giving Back</div>
+        <div class="charity-title">Art &amp; Community for a Cause</div>
+        <div class="charity-desc">A donation of our published books will go to our vetted nonprofit charity partners, supporting children and adults with Autism. Every BaeBieZ minted contributes to something bigger than the blockchain. Because community means everyone.</div>
+        <div class="charity-partners">
+          <span class="charity-partner">💙 United Way of Mass Bay</span>
+          <span class="charity-partner">💙 Autism Speaks</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2025 BaeBieZ by Bae Apes. All rights reserved. &nbsp;·&nbsp; <a href="https://baeapes.com">baeapes.com</a></span>
+    <span>
+      <a href="#" id="contractLink">Contract ↗</a> &nbsp;·&nbsp;
+      <a href="https://baeapes.stakeaway.io/" target="_blank">Staking</a> &nbsp;·&nbsp;
+      <a href="https://x.com/BaeApes" target="_blank">Twitter / X</a> &nbsp;·&nbsp;
+      <a href="https://discord.gg/qrWM2pTBS5" target="_blank">Discord</a>
+    </span>
+  </footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+<script>
+const CONTRACT_ADDRESS="0xb527E8637524c6fb192c8A113a4A39c2E688Fdb9";
+const TOTAL_SUPPLY=4444;
+const MINT_LOCKED=true;
+const APECHAIN_ID=33139;
+const APECHAIN_PARAMS={chainId:"0x8173",chainName:"ApeChain",nativeCurrency:{name:"APE",symbol:"APE",decimals:18},rpcUrls:["https://rpc.apechain.com/http"],blockExplorerUrls:["https://apescan.io"]};
+const PHASES={CLOSED:{price:0,maxPerTx:0},GTD:{price:31,maxPerTx:20},FCFS:{price:31,maxPerTx:20},PUBLIC:{price:99,maxPerTx:50}};
+const ABI=["function publicMint(uint256 quantity) payable","function totalMinted() view returns (uint256)","function getCurrentPhase() view returns (string)"];
+
+let provider,signer,contract,walletConnected=false,qty=1,currentPhase="CLOSED",currentMaxPerTx=50,currentPrice=99;
+const $=id=>document.getElementById(id);
+
+function setStatus(msg,type){const el=$("statusMsg");el.innerHTML=msg;el.className="status-msg show "+type}
+function clearStatus(){$("statusMsg").className="status-msg";$("statusMsg").textContent=""}
+
+function updateQtyDisplay(){
+  $("qtyDisplay").textContent=qty;
+  $("qtyMinus").disabled=qty<=1;
+  $("qtyPlus").disabled=qty>=currentMaxPerTx;
+  $("totalPrice").textContent=MINT_LOCKED?"TBA":(qty*currentPrice).toLocaleString()+" APE";
+}
+
+function updateProgress(minted){
+  const pct=((minted/TOTAL_SUPPLY)*100).toFixed(1);
+  $("mintedCount").textContent=minted.toLocaleString() + " / " + TOTAL_SUPPLY.toLocaleString();
+  $("remainingCount").textContent=(TOTAL_SUPPLY-minted).toLocaleString();
+  $("progressMinted").textContent=minted.toLocaleString();
+  $("progressPct").textContent=pct+"%";
+  $("progressFill").style.width=pct+"%";
+}
+
+function updatePhaseUI(phase){
+  currentPhase=MINT_LOCKED?"CLOSED":phase;
+  const p=MINT_LOCKED?PHASES.PUBLIC:(PHASES[phase]||PHASES.PUBLIC);
+  const phaseOrder=["GTD","FCFS","PUBLIC"];
+  currentMaxPerTx=p.maxPerTx;currentPrice=p.price;
+  $("maxQtyLabel").textContent=p.maxPerTx;
+  qty=Math.min(qty,p.maxPerTx||1);
+  updateQtyDisplay();
+  $("phaseIndicatorText").textContent=MINT_LOCKED||phase==="CLOSED"
+    ?"Mint phases opening soon — stay tuned"
+    :`${phase} mint is live now`;
+  $("phaseIndicatorText").parentElement.classList.toggle("locked",MINT_LOCKED);
+  const cards={GTD:"phaseCardGTD",FCFS:"phaseCardFCFS",PUBLIC:"phaseCardPUBLIC"};
+  const badges={GTD:"phaseBadgeGTD",FCFS:"phaseBadgeFCFS",PUBLIC:"phaseBadgePUBLIC"};
+  Object.values(cards).forEach(cardId=>{
+    const card=$(cardId);
+    card.classList.remove("active","upcoming","ended","locked");
+    if(MINT_LOCKED||phase==="CLOSED")card.classList.add("upcoming","locked");
+  });
+  Object.values(badges).forEach(badgeId=>{
+    const badge=$(badgeId);
+    badge.className="phase-badge soon";
+    badge.textContent="COMING SOON";
+  });
+  if(!MINT_LOCKED&&cards[phase]){
+    $(cards[phase]).classList.add("active");
+    $(badges[phase]).className="phase-badge live";
+    $(badges[phase]).textContent="LIVE NOW";
+    phaseOrder.slice(0,phaseOrder.indexOf(phase)).forEach(donePhase=>{
+      $(cards[donePhase]).classList.add("ended");
+      $(badges[donePhase]).className="phase-badge ended2";
+      $(badges[donePhase]).textContent="ENDED";
+    });
+  }
+  const btn=$("mainMintBtn");
+  if(MINT_LOCKED||phase==="CLOSED"){
+    btn.textContent="Mint Coming Soon";
+    btn.className="mint-btn connect";
+    btn.disabled=true;
+  }else{
+    btn.textContent=phase==="PUBLIC"?"Mint Now":`${phase} Mint`;
+    btn.className="mint-btn active";
+    btn.disabled=false;
+  }
+}
+
+function changeQty(delta){qty=Math.min(currentMaxPerTx,Math.max(1,qty+delta));updateQtyDisplay()}
+function openWalletModal(){$("walletModal").classList.add("show")}
+function closeWalletModal(){$("walletModal").classList.remove("show")}
+
+async function connectWith(walletType){
+  closeWalletModal();
+  if(!window.ethereum){setStatus("No Web3 wallet detected. Please install MetaMask or another compatible wallet.","error");return;}
+  try{
+    await window.ethereum.request({method:"eth_requestAccounts"});
+    provider=new ethers.providers.Web3Provider(window.ethereum);
+    const{chainId}=await provider.getNetwork();
+    if(chainId!==APECHAIN_ID){
+      try{await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:APECHAIN_PARAMS.chainId}]});}
+      catch(e){if(e.code===4902)await window.ethereum.request({method:"wallet_addEthereumChain",params:[APECHAIN_PARAMS]});else throw e;}
+      provider=new ethers.providers.Web3Provider(window.ethereum);
+    }
+    signer=provider.getSigner();
+    contract=new ethers.Contract(CONTRACT_ADDRESS,ABI,signer);
+    const addr=await signer.getAddress();
+    const short=addr.slice(0,6)+"…"+addr.slice(-4);
+    walletConnected=true;
+    $("navConnectBtn").textContent=short;
+    $("walletSubtext").textContent="Wallet connected — mint phases opening soon";
+    const btn=$("mainMintBtn");btn.textContent="Mint Coming Soon";btn.className="mint-btn connect";btn.disabled=true;
+    clearStatus();await refreshContractData();
+  }catch(err){setStatus("Connection failed: "+(err.message||err),"error");}
+}
+
+async function refreshContractData(){
+  if(!contract)return;
+  try{
+    const[minted,phase]=await Promise.all([contract.totalMinted().catch(()=>null),contract.getCurrentPhase().catch(()=>null)]);
+    if(minted!==null)updateProgress(minted.toNumber());
+    if(phase!==null)updatePhaseUI(phase);
+  }catch(_){}
+}
+
+async function handleMintBtn(){if(!walletConnected){openWalletModal();return;}await mint();}
+
+async function mint(){
+  if(!contract||!signer)return;
+  if(currentPhase==="CLOSED"){setStatus("Minting is currently paused. Check Discord for updates.","error");return;}
+  if(currentPhase==="GTD"||currentPhase==="FCFS"){setStatus("This phase requires an allowlist proof. Check Discord for details.","error");return;}
+  const btn=$("mainMintBtn");
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Minting…';
+  setStatus("Waiting for wallet confirmation…","pending");
+  try{
+    const priceWei=ethers.utils.parseEther(currentPrice.toString());
+    const totalVal=priceWei.mul(qty);
+    const tx=await contract.publicMint(qty,{value:totalVal});
+    setStatus("Transaction submitted! Waiting for confirmation…","pending");
+    btn.innerHTML='<span class="spinner"></span>Confirming…';
+    const receipt=await tx.wait();
+    const scanLink=`https://apescan.io/tx/${receipt.transactionHash}`;
+    setStatus(`✓ Successfully minted ${qty} BaeBieZ!<br><a href="${scanLink}" target="_blank" style="color:var(--green);text-decoration:underline">View on ApeScan ↗</a>`,"success");
+    btn.disabled=false;btn.innerHTML="Mint More";btn.className="mint-btn active";
+    await refreshContractData();
+  }catch(err){
+    let msg=err?.reason||err?.data?.message||err?.message||"Transaction failed.";
+    if(msg.includes("insufficient funds"))msg="Insufficient APE balance for this mint.";
+    if(msg.includes("user rejected"))msg="Transaction was cancelled in your wallet.";
+    setStatus("Error: "+msg,"error");
+    btn.disabled=false;btn.innerHTML="Try Again";btn.className="mint-btn active";
+  }
+}
+
+updateQtyDisplay();
+updateProgress(919);
+updatePhaseUI("CLOSED");
+if(CONTRACT_ADDRESS!=="YOUR_CONTRACT_ADDRESS_HERE")$("contractLink").href=`https://apescan.io/address/${CONTRACT_ADDRESS}`;
+if(window.ethereum?.selectedAddress)connectWith("metamask").catch(()=>{});
+</script>
+</body>
+</html>
