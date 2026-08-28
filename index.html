@@ -321,10 +321,10 @@
       </div>
       <div class="progress-section">
         <div class="progress-labels">
-          <span><strong id="progressMinted">—</strong> minted</span>
-          <span><strong id="progressPct">—%</strong> complete</span>
+          <span><strong id="progressMinted">919</strong> minted</span>
+          <span><strong id="progressPct">20.7%</strong> complete</span>
         </div>
-        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20.7%"></div></div>
       </div>
       <div class="qty-label">Quantity (max <span id="maxQtyLabel">50</span>)</div>
       <div class="qty-row">
@@ -446,6 +446,7 @@
 <script>
 const CONTRACT_ADDRESS="0xb527E8637524c6fb192c8A113a4A39c2E688Fdb9";
 const TOTAL_SUPPLY=4444;
+const PRIOR_MINTED=919;
 const MINT_LOCKED=true;
 const APECHAIN_RPC="https://rpc.apechain.com/http";
 const APECHAIN_ID=33139;
@@ -462,14 +463,13 @@ const READ_ABI = [
   {"inputs":[],"name":"remainingSupply","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
   {"inputs":[],"name":"mintedOnThisContract","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
   {"inputs":[],"name":"currentPhase","outputs":[{"type":"uint8"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"getCurrentPhase","outputs":[{"type":"string"}],"stateMutability":"view","type":"function"},
   {"inputs":[],"name":"gtdPrice","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
   {"inputs":[],"name":"fcfsPrice","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
   {"inputs":[],"name":"publicPrice","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
 ];
 const READ_PROVIDER=new ethers.JsonRpcProvider(APECHAIN_RPC);
 const readContract=new ethers.Contract(CONTRACT_ADDRESS,READ_ABI,READ_PROVIDER);
-const PRIOR_MINTED = 919; // historic minted count from prior contract
-
 let provider,signer,contract,walletConnected=false,qty=1,currentPhase="CLOSED",currentMaxPerTx=50,currentPrice=99;
 const $=id=>document.getElementById(id);
 
@@ -553,12 +553,12 @@ async function connectWith(walletType){
     await window.ethereum.request({method:"eth_requestAccounts"});
     provider=new ethers.BrowserProvider(window.ethereum);
     const{chainId}=await provider.getNetwork();
-    if(chainId!==APECHAIN_ID){
+    if(Number(chainId)!==APECHAIN_ID){
       try{await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:APECHAIN_PARAMS.chainId}]});}
       catch(e){if(e.code===4902)await window.ethereum.request({method:"wallet_addEthereumChain",params:[APECHAIN_PARAMS]});else throw e;}
       provider=new ethers.BrowserProvider(window.ethereum);
     }
-    signer=provider.getSigner();
+    signer=await provider.getSigner();
     contract=new ethers.Contract(CONTRACT_ADDRESS,ABI,signer);
     const addr=await signer.getAddress();
     const short=addr.slice(0,6)+"…"+addr.slice(-4);
@@ -607,7 +607,7 @@ async function mint(){
   setStatus("Waiting for wallet confirmation…","pending");
   try{
     const priceWei=ethers.parseEther(currentPrice.toString());
-    const totalVal=priceWei.mul(qty);
+    const totalVal=priceWei * BigInt(qty);
     const tx=await contract.publicMint(qty,{value:totalVal});
     setStatus("Transaction submitted! Waiting for confirmation…","pending");
     btn.innerHTML='<span class="spinner"></span>Confirming…';

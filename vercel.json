@@ -1,19 +1,11 @@
 {
   "version": 2,
-<<<<<<< HEAD
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "*.png", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/(.*)", "dest": "/$1" }
-=======
-  "name": "baebiez-mint",
-  "builds": [
-    { "src": "index.html", "use": "@vercel/static" }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "/index.html" }
   ],
   "headers": [
     {
@@ -24,6 +16,5 @@
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     }
->>>>>>> 9ce38402a9f0e13776bae4bffcc32795c9586524
   ]
 }
