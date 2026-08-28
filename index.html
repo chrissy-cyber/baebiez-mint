@@ -455,8 +455,22 @@ const PHASES={CLOSED:{price:0,maxPerTx:0},GTD:{price:31,maxPerTx:20},FCFS:{price
 // write ABI (keeps mint signatures used when connected with signer)
 const ABI=[
   "function publicMint(uint256 quantity) payable",
+  "function gtdMint(uint256 quantity, bytes32[] merkleProof) payable",
+  "function fcfsMint(uint256 quantity, bytes32[] merkleProof) payable",
   "function mint(uint256 quantity) payable"
 ];
+let gtdProofs=null, fcfsProofs=null;
+async function loadProofs(phase){
+  if(phase==="GTD"){
+    if(!gtdProofs) gtdProofs=await fetch("/gtd-proofs.json").then(r=>r.json()).catch(()=>({}));
+    return gtdProofs;
+  }
+  if(phase==="FCFS"){
+    if(!fcfsProofs) fcfsProofs=await fetch("/fcfs-proofs.json").then(r=>r.json()).catch(()=>({}));
+    return fcfsProofs;
+  }
+  return {};
+}
 // read-only ABI (JSON format) used by the read-only provider on page load
 const READ_ABI = [
   {"inputs":[],"name":"totalMinted","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
@@ -601,14 +615,26 @@ async function handleMintBtn(){if(!walletConnected){openWalletModal();return;}aw
 async function mint(){
   if(!contract||!signer)return;
   if(currentPhase==="CLOSED"){setStatus("Minting is currently paused. Check Discord for updates.","error");return;}
-  if(currentPhase==="GTD"||currentPhase==="FCFS"){setStatus("This phase requires an allowlist proof. Check Discord for details.","error");return;}
   const btn=$("mainMintBtn");
+  let proof=[];
+  if(currentPhase==="GTD"||currentPhase==="FCFS"){
+    setStatus("Checking allowlist…","pending");
+    const proofs=await loadProofs(currentPhase);
+    const addr=(await signer.getAddress()).toLowerCase();
+    proof=proofs[addr];
+    if(!proof){
+      setStatus(`This wallet isn't on the ${currentPhase} allowlist. Check Discord if you believe this is an error.`,"error");
+      return;
+    }
+  }
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Minting…';
   setStatus("Waiting for wallet confirmation…","pending");
   try{
     const priceWei=ethers.parseEther(currentPrice.toString());
     const totalVal=priceWei * BigInt(qty);
-    const tx=await contract.publicMint(qty,{value:totalVal});
+    const tx=currentPhase==="GTD" ? await contract.gtdMint(qty,proof,{value:totalVal})
+      : currentPhase==="FCFS" ? await contract.fcfsMint(qty,proof,{value:totalVal})
+      : await contract.publicMint(qty,{value:totalVal});
     setStatus("Transaction submitted! Waiting for confirmation…","pending");
     btn.innerHTML='<span class="spinner"></span>Confirming…';
     const receipt=await tx.wait();
@@ -620,6 +646,8 @@ async function mint(){
     let msg=err?.reason||err?.data?.message||err?.message||"Transaction failed.";
     if(msg.includes("insufficient funds"))msg="Insufficient APE balance for this mint.";
     if(msg.includes("user rejected"))msg="Transaction was cancelled in your wallet.";
+    if(msg.includes("Not on GTD allowlist")||msg.includes("Not on FCFS allowlist"))msg="This wallet isn't on the allowlist for this phase.";
+    if(msg.includes("phase not active"))msg="This mint phase isn't active right now — refresh the page and try again.";
     setStatus("Error: "+msg,"error");
     btn.disabled=false;btn.innerHTML="Try Again";btn.className="mint-btn active";
   }
