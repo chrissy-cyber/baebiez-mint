@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BaeBieZ — Phase 2 Mint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0d0d12;
+    --bg-panel:#15151d;
+    --line:#26262f;
+    --lime:#c8ff5c;
+    --pink:#ff4fa3;
+    --text:#f3f2ee;
+    --text-dim:#9b9aa5;
+    --err:#ff6b6b;
+    --ok:#7ee787;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(200,255,92,0.06), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(255,79,163,0.07), transparent 40%);
+  }
+  header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:24px 28px;border-bottom:1px solid var(--line);
+    flex-wrap:wrap;gap:12px;
+  }
+  .brand{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;font-size:20px;letter-spacing:-0.02em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime);}
+  .wallet-btn{
+    background:var(--lime);color:#0d0d12;border:none;border-radius:10px;
+    padding:11px 18px;font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:14px;cursor:pointer;transition:transform .15s ease;
+  }
+  .wallet-btn:hover{transform:translateY(-1px);}
+  .wallet-btn:disabled{opacity:0.5;cursor:default;transform:none;}
+  .wallet-chip{
+    background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;
+    padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-dim);
+    display:flex;align-items:center;gap:8px;
+  }
+  .wallet-chip .live{width:7px;height:7px;border-radius:50%;background:var(--ok);}
+
+  main{max-width:640px;margin:0 auto;padding:56px 24px 100px;}
+
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--pink);
+    letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:44px;
+    line-height:1.05;letter-spacing:-0.02em;margin:0 0 14px;
+  }
+  h1 span{color:var(--lime);}
+  .sub{color:var(--text-dim);font-size:16px;line-height:1.55;max-width:480px;margin:0 0 40px;}
+
+  .panel{
+    background:var(--bg-panel);border:1px solid var(--line);border-radius:16px;
+    padding:28px;margin-bottom:20px;
+  }
+  .panel-label{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);
+    letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;
+  }
+
+  .id-row{display:flex;gap:10px;align-items:center;}
+  input[type=number]{
+    flex:1;background:#0a0a0e;border:1px solid var(--line);border-radius:10px;
+    color:var(--text);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;
+    padding:14px 16px;width:100%;outline:none;
+  }
+  input[type=number]:focus{border-color:var(--lime);}
+  input[type=number]::-webkit-inner-spin-button{opacity:1;}
+  .hint{font-size:13px;color:var(--text-dim);margin-top:10px;}
+
+  .status-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;
+  }
+  .status-row:last-child{border-bottom:none;}
+  .status-row .k{color:var(--text-dim);}
+  .status-row .v{font-family:'JetBrains Mono',monospace;font-weight:500;}
+  .v.ok{color:var(--ok);} .v.err{color:var(--err);} .v.pending{color:var(--pink);}
+
+  .mint-btn{
+    width:100%;background:linear-gradient(135deg,var(--lime),#9fe62f);
+    color:#0d0d12;border:none;border-radius:12px;padding:18px;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;
+    cursor:pointer;margin-top:18px;transition:transform .15s ease, opacity .15s ease;
+  }
+  .mint-btn:hover:not(:disabled){transform:translateY(-1px);}
+  .mint-btn:disabled{opacity:0.35;cursor:not-allowed;}
+
+  .msg{
+    margin-top:16px;padding:14px 16px;border-radius:10px;font-size:14px;
+    font-family:'JetBrains Mono',monospace;line-height:1.5;display:none;
+  }
+  .msg.show{display:block;}
+  .msg.info{background:rgba(200,255,92,0.08);border:1px solid rgba(200,255,92,0.25);color:var(--lime);}
+  .msg.error{background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.25);color:var(--err);}
+  .msg.success{background:rgba(126,231,135,0.08);border:1px solid rgba(126,231,135,0.25);color:var(--ok);}
+  .msg a{color:inherit;}
+
+  .switch-net{
+    background:none;border:1px solid var(--pink);color:var(--pink);
+    border-radius:8px;padding:6px 12px;font-size:12px;font-family:'JetBrains Mono',monospace;
+    cursor:pointer;
+  }
+
+  footer{
+    text-align:center;padding:30px;color:var(--text-dim);font-size:12px;
+    font-family:'JetBrains Mono',monospace;
+  }
+  footer a{color:var(--text-dim);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><span class="dot"></span>BaeBieZ Avatars</div>
+  <div id="walletArea"><button class="wallet-btn" id="connectBtn">Connect Wallet</button></div>
+</header>
+
+<main>
+  <div class="eyebrow">Phase 2 — Live Now</div>
+  <h1>Mint your <span>avatar</span>.</h1>
+  <p class="sub">Enter the token ID of the BaeBieZ NFT you hold. Your avatar mints with the same number, permanently bound to it.</p>
+
+  <div class="panel">
+    <div class="panel-label">Your BaeBieZ Token ID</div>
+    <div class="id-row">
+      <input type="number" id="tokenId" placeholder="e.g. 42" min="1" max="4444" />
+    </div>
+    <div class="hint">Works for tokens #1 through #4444 — from either mint contract.</div>
+  </div>
+
+  <div class="panel" id="statusPanel" style="display:none;">
+    <div class="panel-label">Status</div>
+    <div class="status-row"><span class="k">Price</span><span class="v" id="priceVal">—</span></div>
+    <div class="status-row"><span class="k">Ownership</span><span class="v" id="ownerVal">—</span></div>
+    <div class="status-row"><span class="k">Avatar status</span><span class="v" id="mintedVal">—</span></div>
+    <button class="mint-btn" id="mintBtn" disabled>Check a token ID above</button>
+    <div class="msg" id="msgBox"></div>
+  </div>
+</main>
+
+<footer>
+  BaeBieZ Avatars runs on ApeChain · Contract <a href="https://apescan.io/address/0x1a9B76356aFa59d73e84D87a1Fb4Ca38dF1AaF56" target="_blank">0x1a9B...aF56</a>
+</footer>
+
+<script>
+const CONTRACT_ADDRESS = "0x1a9B76356aFa59d73e84D87a1Fb4Ca38dF1AaF56";
+const APECHAIN_CHAIN_ID = 33139;
+const APECHAIN_HEX = "0x8173";
+
+const ABI = [
+  "function price() view returns (uint256)",
+  "function minted(uint256) view returns (bool)",
+  "function baebiezOwnerOf(uint256) view returns (address)",
+  "function mintAvatar(uint256 tokenId) payable"
+];
+
+let provider, signer, contract, userAddress;
+
+const connectBtn = document.getElementById('connectBtn');
+const walletArea = document.getElementById('walletArea');
+const tokenIdInput = document.getElementById('tokenId');
+const statusPanel = document.getElementById('statusPanel');
+const priceVal = document.getElementById('priceVal');
+const ownerVal = document.getElementById('ownerVal');
+const mintedVal = document.getElementById('mintedVal');
+const mintBtn = document.getElementById('mintBtn');
+const msgBox = document.getElementById('msgBox');
+
+function showMsg(text, type){
+  msgBox.className = 'msg show ' + type;
+  msgBox.innerHTML = text;
+}
+function clearMsg(){
+  msgBox.className = 'msg';
+  msgBox.innerHTML = '';
+}
+function shortAddr(a){ return a.slice(0,6) + '…' + a.slice(-4); }
+
+async function connectWallet(){
+  if (!window.ethereum){
+    showMsg('No wallet found. Install MetaMask to continue.', 'error');
+    return;
+  }
+  try {
+    provider = new ethers.BrowserProvider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    signer = await provider.getSigner();
+    userAddress = await signer.getAddress();
+
+    const network = await provider.getNetwork();
+    if (Number(network.chainId) !== APECHAIN_CHAIN_ID){
+      renderWrongNetwork();
+      return;
+    }
+
+    contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+    renderConnected();
+    statusPanel.style.display = 'block';
+    if (tokenIdInput.value) checkToken();
+  } catch (err){
+    showMsg('Connection failed: ' + (err.message || err), 'error');
+  }
+}
+
+async function switchNetwork(){
+  try {
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: APECHAIN_HEX }]
+    });
+    connectWallet();
+  } catch (switchError) {
+    if (switchError.code === 4902){
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: APECHAIN_HEX,
+            chainName: 'ApeChain',
+            rpcUrls: ['https://apechain.calderachain.xyz/http'],
+            nativeCurrency: { name: 'ApeCoin', symbol: 'APE', decimals: 18 },
+            blockExplorerUrls: ['https://apescan.io']
+          }]
+        });
+        connectWallet();
+      } catch (addError){
+        showMsg('Could not add ApeChain: ' + (addError.message || addError), 'error');
+      }
+    } else {
+      showMsg('Network switch failed: ' + (switchError.message || switchError), 'error');
+    }
+  }
+}
+
+function renderConnected(){
+  walletArea.innerHTML = `<div class="wallet-chip"><span class="live"></span>${shortAddr(userAddress)}</div>`;
+}
+
+function renderWrongNetwork(){
+  walletArea.innerHTML = `<button class="switch-net" id="switchBtn">Wrong network — switch to ApeChain</button>`;
+  document.getElementById('switchBtn').addEventListener('click', switchNetwork);
+  showMsg('Your wallet is on the wrong network. Click above to switch to ApeChain before minting.', 'error');
+  statusPanel.style.display = 'block';
+  mintBtn.disabled = true;
+  mintBtn.textContent = 'Switch network first';
+}
+
+async function checkToken(){
+  const id = tokenIdInput.value;
+  if (!id || id < 1 || id > 4444){
+    mintBtn.disabled = true;
+    mintBtn.textContent = 'Enter a valid token ID (1–4444)';
+    return;
+  }
+  if (!contract){
+    mintBtn.disabled = true;
+    mintBtn.textContent = 'Connect wallet first';
+    return;
+  }
+  clearMsg();
+  mintBtn.disabled = true;
+  mintBtn.textContent = 'Checking...';
+
+  try {
+    const [priceWei, isMinted] = await Promise.all([
+      contract.price(),
+      contract.minted(id)
+    ]);
+
+    const priceApe = ethers.formatEther(priceWei);
+    priceVal.textContent = priceApe + ' APE';
+
+    if (isMinted){
+      mintedVal.textContent = 'Already minted';
+      mintedVal.className = 'v err';
+      ownerVal.textContent = '—';
+      ownerVal.className = 'v';
+      mintBtn.textContent = 'Already minted';
+      mintBtn.disabled = true;
+      return;
+    } else {
+      mintedVal.textContent = 'Available';
+      mintedVal.className = 'v ok';
+    }
+
+    const owner = await contract.baebiezOwnerOf(id);
+    const isOwner = owner.toLowerCase() === userAddress.toLowerCase();
+
+    if (isOwner){
+      ownerVal.textContent = 'You own this token';
+      ownerVal.className = 'v ok';
+      mintBtn.disabled = false;
+      mintBtn.textContent = `Mint Avatar — ${priceApe} APE`;
+    } else {
+      ownerVal.textContent = 'Not your token';
+      ownerVal.className = 'v err';
+      mintBtn.disabled = true;
+      mintBtn.textContent = 'You do not own this token';
+    }
+  } catch (err){
+    showMsg('Could not look up this token: ' + (err.message || err), 'error');
+    mintBtn.disabled = true;
+    mintBtn.textContent = 'Check failed';
+  }
+}
+
+async function mintAvatar(){
+  const id = tokenIdInput.value;
+  clearMsg();
+  mintBtn.disabled = true;
+  mintBtn.textContent = 'Confirm in wallet...';
+
+  try {
+    const priceWei = await contract.price();
+    const tx = await contract.mintAvatar(id, { value: priceWei });
+    showMsg(`Transaction sent. Waiting for confirmation...<br><a href="https://apescan.io/tx/${tx.hash}" target="_blank">View on Apescan →</a>`, 'info');
+    mintBtn.textContent = 'Minting...';
+
+    await tx.wait();
+    showMsg(`Avatar #${id} minted! <a href="https://apescan.io/tx/${tx.hash}" target="_blank">View on Apescan →</a>`, 'success');
+    mintBtn.textContent = 'Minted!';
+  } catch (err){
+    const reason = err.reason || err.shortMessage || err.message || 'Transaction failed';
+    showMsg('Mint failed: ' + reason, 'error');
+    mintBtn.disabled = false;
+    mintBtn.textContent = 'Try again';
+  }
+}
+
+connectBtn.addEventListener('click', connectWallet);
+mintBtn.addEventListener('click', mintAvatar);
+tokenIdInput.addEventListener('input', () => {
+  if (contract) checkToken();
+});
+
+if (window.ethereum){
+  window.ethereum.on('accountsChanged', () => connectWallet());
+  window.ethereum.on('chainChanged', () => window.location.reload());
+}
+</script>
+
+</body>
+</html>
